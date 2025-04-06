@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_DEV = "mydockerhub/myapp-dev"
-        DOCKER_IMAGE_STAGE = "mydockerhub/myapp-stage"
-        DOCKER_IMAGE_PROD = "mydockerhub/myapp-prod"
+        DOCKER_IMAGE_DEV = "sunlnx/fastapi-dev"
+        DOCKER_IMAGE_STAGE = "sunlnx/fastapi-stage"
+        DOCKER_IMAGE_PROD = "sunlnx/fastapi-prod"
     }
 
     stages {
@@ -32,7 +32,7 @@ pipeline {
                         image = "${DOCKER_IMAGE_DEV}:${env.BUILD_NUMBER}"
                     } else if (branch == 'stage') {
                         image = "${DOCKER_IMAGE_STAGE}:${env.BUILD_NUMBER}"
-                    } else if (branch == 'main') {
+                    } else if (branch == 'master') {
                         image = "${DOCKER_IMAGE_PROD}:${env.BUILD_NUMBER}"
                     } else {
                         error("Branch not supported for deployment")
