@@ -63,6 +63,22 @@ pipeline {
         // }
 
 
+        stage('Build Docker Image dev branch') {
+
+            when {
+                branch 'dev'
+            }
+
+            steps {
+                script {
+                    echo "Building Docker image locally..."
+                    sh """
+                        docker build -t ${IMAGE_NAME} .
+                    """
+                }
+            }
+        }
+
         stage('Deploy to Local') {
             when {
                 branch 'dev'
