@@ -63,67 +63,36 @@ pipeline {
         // }
 
 
-// stage('Deploy to Prod') {
-//     when {
-//         branch 'main'
-//     }
-//     steps {
-//         script {
-//             def imageName = "myapp:latest"
+        stage('Deploy to Local') {
+            when {
+                branch 'dev'
+            }
+            steps {
+                script {
+                    def imageName = "myapp:latest"
 
-//             echo "Deploying production image locally..."
+                    echo "Deploying production image locally..."
 
-//             // Stop and remove any existing container
-//             sh """
-//                 docker rm -f myapp-container || true
-//             """
+                    // Stop and remove any existing container
+                    sh """
+                        docker rm -f myapp-container || true
+                    """
 
-//             // Run the Docker container
-//             sh """
-//                 docker run -d --name myapp-container -p 8080:80 ${imageName}
-//             """
+                    // Run the Docker container
+                    sh """
+                        docker run -d --name myapp-container -p 8080:80 ${imageName}
+                    """
 
-//             // Check if it's running
-//             sh """
-//                 echo "Checking if container is up..."
-//                 docker ps | grep myapp-container
-//             """
+                    // Check if it's running
+                    sh """
+                        echo "Checking if container is up..."
+                        docker ps | grep myapp-container
+                    """
 
-//             echo "App should now be accessible at: http://localhost:8080"
-//         }
-//     }
-// }
-
-stage('check on dev environment') {
-    when {
-        branch 'dev'
-    }
-    steps {
-        script {
-            def imageName = "myapp:latest"
-
-            echo "Deploying production image locally..."
-
-            // Stop and remove any existing container
-            sh """
-                docker rm -f myapp-container || true
-            """
-
-            // Run the Docker container
-            sh """
-                docker run -d --name myapp-container -p 8080:80 ${imageName}
-            """
-
-            // Check if it's running
-            sh """
-                echo "Checking if container is up..."
-                docker ps | grep myapp-container
-            """
-
-            echo "App should now be accessible at: http://localhost:8080"
+                    echo "App should now be accessible at: http://localhost:8080"
+                }
+            }
         }
-    }
-}
 
 
     }
