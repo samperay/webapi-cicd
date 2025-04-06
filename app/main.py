@@ -4,4 +4,5 @@ app = FastAPI()
 
 @app.get("/")
 def health_check():
+    # added comment
     return {"status": "ok"}
