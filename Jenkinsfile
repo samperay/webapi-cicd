@@ -18,49 +18,50 @@ pipeline {
             steps {
                 sh '''
                     python3 -m venv .venv
-                    source .venv/bin/activate
+                    . .venv/bin/activate
+                    pip install --upgrade pip
                     pip install -r requirements.txt
-                    pytest tests/
+                    PYTHONPATH=. pytest tests/
                 '''
             }
         }
 
-        stage('Build & Push Docker Image') {
-            steps {
-                script {
-                    def branch = env.BRANCH_NAME
-                    def image = ""
-                    if (branch == 'dev') {
-                        image = "${DOCKER_IMAGE_DEV}:${env.BUILD_NUMBER}"
-                    } else if (branch == 'stage') {
-                        image = "${DOCKER_IMAGE_STAGE}:${env.BUILD_NUMBER}"
-                    } else if (branch == 'master') {
-                        image = "${DOCKER_IMAGE_PROD}:${env.BUILD_NUMBER}"
-                    } else {
-                        error("Branch not supported for deployment")
-                    }
+    //     stage('Build & Push Docker Image') {
+    //         steps {
+    //             script {
+    //                 def branch = env.BRANCH_NAME
+    //                 def image = ""
+    //                 if (branch == 'dev') {
+    //                     image = "${DOCKER_IMAGE_DEV}:${env.BUILD_NUMBER}"
+    //                 } else if (branch == 'stage') {
+    //                     image = "${DOCKER_IMAGE_STAGE}:${env.BUILD_NUMBER}"
+    //                 } else if (branch == 'master') {
+    //                     image = "${DOCKER_IMAGE_PROD}:${env.BUILD_NUMBER}"
+    //                 } else {
+    //                     error("Branch not supported for deployment")
+    //                 }
 
-                    docker.build(image)
+    //                 docker.build(image)
 
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
-                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                            docker push ${image}
-                        """
-                    }
-                }
-            }
-        }
+    //                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+    //                     sh """
+    //                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+    //                         docker push ${image}
+    //                     """
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Deploy to Prod') {
-            when {
-                branch 'main'
-            }
-            steps {
-                echo "Deploying production image..."
-                // Add SSH, K8s or Docker remote deploy script here
-            }
-        }
+    //     stage('Deploy to Prod') {
+    //         when {
+    //             branch 'main'
+    //         }
+    //         steps {
+    //             echo "Deploying production image..."
+    //             // Add SSH, K8s or Docker remote deploy script here
+    //         }
+    //     }
     }
 
     post {
